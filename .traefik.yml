@@ -25,3 +25,4 @@ testData:
   Scope: "openid"
   TokenCookieName: "AUTH_TOKEN"
   UseAuthHeader: false
+  InsecureSkipVerify: false

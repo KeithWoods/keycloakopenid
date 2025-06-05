@@ -63,6 +63,7 @@ http:
           TokenCookieName: "<TOKEN_COOKIE_NAME (default: 'AUTH_TOKEN')"
           UseAuthHeader: "<true|false (default: false)"
           IgnorePathPrefixes: "/api,/favicon.ico [comma deliminated] (optional)"
+          InsecureSkipVerify: "<true|false (default: false, used if you are using self signed certs for testing only)"
 ```
 
 Alternatively, ClientID and ClientSecret can be read from a file to support Docker Secrets and Kubernetes Secrets:
@@ -80,6 +81,7 @@ http:
           Scope: "<SCOPE [space deliminated] (default: 'openid', example: 'openid profile email')"
           TokenCookieName: "<TOKEN_COOKIE_NAME (default: 'AUTH_TOKEN')"
           UseAuthHeader: "<true|false (default: false)"
+          InsecureSkipVerify: "<true|false (default: false)"
 ```
 
 Last but not least, each configuration can be read from environment file to support some Kubernetes configurations:
@@ -97,6 +99,7 @@ http:
           ScopeEnv: "SCOPE [space deliminated] (default: 'openid', example: 'openid profile email')"
           TokenCookieNameEnv: "TOKEN_COOKIE_NAME (default: 'AUTH_TOKEN')"
           UseAuthHeaderEnv: "USE_AUTH_HEADER (default: false)"
+          InsecureSkipVerify: "INSECURE_SKIP_VERIFY (default: false)"
 ```
 
 This plugin also sets a header with a claim from Keycloak, as it has become reasonably common. Claim name and header name can be modified.  

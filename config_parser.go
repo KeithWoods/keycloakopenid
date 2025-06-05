@@ -21,6 +21,7 @@ type Config struct {
 	UserClaimName      string `json:"user_claim_name"`
 	UserHeaderName     string `json:"user_header_name"`
 	IgnorePathPrefixes string `json:"ignore_path_prefixes"`
+	InsecureSkipVerify bool   `json:"insecure_skip_verify"`
 
 	ClientIDFile          string `json:"client_id_file"`
 	ClientSecretFile      string `json:"client_secret_file"`
@@ -32,6 +33,7 @@ type Config struct {
 	TokenCookieNameEnv    string `json:"token_cookie_name_env"`
 	UseAuthHeaderEnv      string `json:"use_auth_header_env"`
 	IgnorePathPrefixesEnv string `json:"ignore_path_prefixes_env"`
+	InsecureSkipVerifyEnv string `json:"insecure_skip_verify_env"`
 }
 
 type keycloakAuth struct {
@@ -46,6 +48,7 @@ type keycloakAuth struct {
 	UserClaimName      string
 	UserHeaderName     string
 	IgnorePathPrefixes []string
+	InsecureSkipVerify bool
 }
 
 type KeycloakTokenResponse struct {
@@ -162,6 +165,14 @@ func readConfigEnv(config *Config) error {
 		}
 		config.IgnorePathPrefixes = strings.TrimSpace(ignorePathPrefixes)
 	}
+	if config.InsecureSkipVerifyEnv != "" {
+		insecureSkipVerify, exists := os.LookupEnv(config.InsecureSkipVerifyEnv)
+		if !exists {
+			insecureSkipVerify = "false"
+		}
+		insecureSkipVerify = strings.ToLower(insecureSkipVerify)
+		config.InsecureSkipVerify = insecureSkipVerify == "true" || insecureSkipVerify == "1"
+	}
 	return nil
 }
 
@@ -213,6 +224,11 @@ func New(uctx context.Context, next http.Handler, config *Config, name string) (
 		ignorePathPrefixes = strings.Split(config.IgnorePathPrefixes, ",")
 	}
 
+	insecureSkipVerify := false
+	if config.InsecureSkipVerify {
+		insecureSkipVerify = true
+	}
+
 	return &keycloakAuth{
 		next:               next,
 		KeycloakURL:        parsedURL,
@@ -225,5 +241,6 @@ func New(uctx context.Context, next http.Handler, config *Config, name string) (
 		UserClaimName:      userClaimName,
 		UserHeaderName:     userHeaderName,
 		IgnorePathPrefixes: ignorePathPrefixes,
+		InsecureSkipVerify: insecureSkipVerify,
 	}, nil
 }
